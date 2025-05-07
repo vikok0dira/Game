@@ -385,10 +385,10 @@
     };
 
     const badgeMap = [
-      { max: 39, img: "images/47191186-7a2d-4ac7-aeca-25504f8f37d4.png" },
-      { max: 69, img: "images/ccc6498f-3a7c-4347-94b3-aa13b2e6b9af.png" },
-      { max: 89, img: "images/9794474a-671b-44d1-8093-13d7275ec03f.png" },
-      { max:100, img: "images/85488a9e-bb88-4018-8add-240cb5f867db.png" }
+      { max: 39, img: "Tier1.png" },
+      { max: 69, img: "Tier2.png" },
+      { max: 89, img: "Tier3.png" },
+      { max:100, img: "Tier4.png" }
     ];
 
     let currentIndex = 0;
