@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Choices for Change 🌱</title>
+  <style>
+    :root {
+      --bg: #f7faa3;
+      --card: #fff9e9;
+      --primary: #3E6B48;
+      --accent: #A67B5B;
+      --highlight: #b9e3ee;
+      --text: #2F2F2F;
+      --shadow: rgba(0,0,0,0.1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .container {
+      width: 100%;
+      max-width: 720px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px var(--shadow);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    h1, h2 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    p {
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+    img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 1.25rem;
+    }
+    .btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.2s;
+      display: inline-block;
+      text-decoration: none;
+      margin-top: 1rem;
+    }
+    .btn:hover {
+      background: var(--accent);
+    }
+    .hidden { display: none; }
+    .choices {
+      list-style: none;
+      margin-top: 1.5rem;
+    }
+    .choices li { margin-bottom: 1rem; }
+    .choices button {
+      width: 100%;
+      background: var(--highlight);
+      border: 2px solid transparent;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      text-align: left;
+      color: var(--text);
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .choices button:hover {
+      background: #E6F7E9;
+      border-color: var(--accent);
+    }
+    .review-item { margin-bottom: 2rem; }
+    .review-item h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+    .review-item ul {
+      list-style: none;
+      margin-bottom: 0.5rem;
+    }
+    .review-item li { margin-bottom: 0.25rem; }
+    .review-item .chosen {
+      font-weight: bold;
+      color: var(--primary);
+    }
+    .feedback {
+      margin-left: 1rem;
+      font-style: italic;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+```
+<!-- INTRO -->
+<div id="intro" class="card">
+  <img src="images/bdecbfab-5075-486f-85cc-e1ed14e79868.png" alt="Choices for Change">
+  <p><strong>Can you lead the world toward a greener, fairer future?</strong></p>
+  <p>In this game, you step into the shoes of a country, business, or policymaker making choices that shape the future of people, planet, and prosperity. Each of your decisions affects sustainability — but not all choices are equally wise.</p>
+  <p>You’ll face 20 short, themed questions, each offering 4 possible strategies. Some look good on paper, some are popular in the news — but only one option truly leads the way toward a just and sustainable world. Each choice earns you between 0 and 5 points.</p>
+  <p>There are no wrong questions here — every effort toward sustainability is a step in the right direction. But there is a better way to do it. Each option delivers a different outcome, and your score reflects how sustainable that outcome really is — for people, the planet, and generations to come.</p>
+  <p><strong>Your goal: Score as close to 100 points as possible.</strong></p>
+  <p>At the end, you’ll receive personalized feedback showing where you nailed it — and where you’ve got room to grow.</p>
+  <hr>
+  <p>Sustainability is more than just planting trees or switching off lights. It’s about systems thinking, long-term planning, and justice. The world needs bold, well-informed leadership — are you ready to take on the challenge?</p>
+  <button id="start-btn" class="btn">Start Quiz</button>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="hidden">
+  <div class="card">
+    <h2 id="q-title"></h2>
+    <p id="q-text"></p>
+    <ul id="q-choices" class="choices"></ul>
+  </div>
+</div>
+
+<!-- REVIEW -->
+<div id="review" class="hidden">
+  <div class="card">
+    <h2>Your Choices & Feedback</h2>
+    <div id="review-list"></div>
+    <button id="badge-btn" class="btn">Show Badge</button>
+  </div>
+</div>
+
+<!-- BADGE -->
+<div id="badge" class="hidden">
+  <div class="card" style="text-align:center;">
+    <h2>Your Sustainability Score: <span id="final-score"></span>/100</h2>
+    <img id="badge-img" src="" alt="Your Badge" style="max-width:300px;">
+  </div>
+</div>
+```
+
+  </div>
+
+  <script>
+    const questions = [
+      {
+        theme: "1. Energy Transition",
+        text: "Your country is creating a decarbonization plan. What’s the centerpiece?",
+        choices: [
+          { text: "Expand fossil fuels but add carbon capture", pts: 0 },
+          { text: "Invest in nuclear and keep natural gas", pts: 1 },
+          { text: "Ramp up solar and wind farms", pts: 3 },
+          { text: "Phase out coal + build large battery storage", pts: 5 }
+        ],
+        insight: "Maximize renewable energy and storage while phasing out fossil fuels entirely — transition tech like natural gas is not enough."
+      },
+      {
+        theme: "2. Transport Policy",
+        text: "How will you lower transport emissions in cities?",
+        choices: [
+          { text: "Build more roads to reduce traffic", pts: 0 },
+          { text: "Promote EV car ownership", pts: 1 },
+          { text: "Improve public transport and bike lanes", pts: 3 },
+          { text: "Redesign cities around walkability + rail", pts: 5 }
+        ],
+        insight: "Reorient urban design toward public transport, cycling, and walkability — cars alone, even electric, won’t decarbonize mobility fast enough."
+      },
+      {
+        theme: "3. Climate Justice",
+        text: "At COP negotiations, what’s your stance?",
+        choices: [
+          { text: "Demand equal cuts from all countries", pts: 0 },
+          { text: "Offer offsets to richer countries", pts: 1 },
+          { text: "Provide finance + tech to Global South", pts: 5 },
+          { text: "Push Europe’s own climate model globally", pts: 3 }
+        ],
+        insight: "Support climate finance and technology transfers to the Global South to address historical responsibility and promote equity."
+      },
+      {
+        theme: "4. Green Finance",
+        text: "How does your company “go green”?",
+        choices: [
+          { text: "Rebrand old products as eco-friendly", pts: 0 },
+          { text: "Offset emissions with cheap credits", pts: 1 },
+          { text: "Invest in clean tech companies", pts: 3 },
+          { text: "Issue green bonds aligned with net-zero goals", pts: 5 }
+        ],
+        insight: "Use green bonds or direct clean investments backed by verified impact — avoid greenwashing or vague ESG claims."
+      },
+      {
+        theme: "5. Housing Policy",
+        text: "You’re tackling energy poverty. What’s the move?",
+        choices: [
+          { text: "Let landlords decide on upgrades", pts: 0 },
+          { text: "Offer rebates for smart home tech", pts: 1 },
+          { text: "Retrofit low-income and public housing first", pts: 5 },
+          { text: "Subsidize solar panels for homeowners", pts: 3 }
+        ],
+        insight: "Target public and rental housing for deep retrofits first — this addresses energy poverty and prevents inequality from growing."
+      },
+      {
+        theme: "6. Carbon Pricing",
+        text: "How do you design a national carbon tax?",
+        choices: [
+          { text: "Keep it low to protect the economy", pts: 1 },
+          { text: "Only apply it to consumers", pts: 0 },
+          { text: "Use the revenue to fund climate projects", pts: 3 },
+          { text: "Make it high, rising over time + redistribute money fairly", pts: 5 }
+        ],
+        insight: "Design high, escalating carbon taxes and use revenue for public good — low taxes or consumer-only schemes won’t drive deep change."
+      },
+      {
+        theme: "7. Raw Materials",
+        text: "Europe needs critical raw materials. What’s your approach?",
+        choices: [
+          { text: "Import from wherever is cheapest", pts: 0 },
+          { text: "Focus only on free trade deals", pts: 1 },
+          { text: "Build circular economy recycling capacity", pts: 5 },
+          { text: "Fund mining in the Global South without regulation", pts: 1 }
+        ],
+        insight: "Prioritize recycling, circular economy, and responsible local sourcing over risky dependence on exploitative supply chains."
+      },
+      {
+        theme: "8. Urban Resilience",
+        text: "Your city is overheating. What’s the plan?",
+        choices: [
+          { text: "Subsidize air conditioners", pts: 1 },
+          { text: "Require reflective building materials", pts: 3 },
+          { text: "Plant trees and expand green space", pts: 5 },
+          { text: "Build more underground garages", pts: 0 }
+        ],
+        insight: "Combat heat with trees, green spaces, and nature-based cooling — air conditioning is a temporary fix, not a solution."
+      },
+      {
+        theme: "9. Hydrogen Strategy",
+        text: "How do you plan hydrogen integration?",
+        choices: [
+          { text: "Prioritize blue hydrogen from fossil gas", pts: 0 },
+          { text: "Wait for the tech to mature", pts: 1 },
+          { text: "Invest in green hydrogen + renewables", pts: 5 },
+          { text: "Produce hydrogen overseas, import it", pts: 3 }
+        ],
+        insight: "Green hydrogen must be made with renewables and used where alternatives don’t exist — don’t fall for fossil-based “blue” hydrogen."
+      },
+      {
+        theme: "10. Corporate Sustainability",
+        text: "How do you hold companies accountable?",
+        choices: [
+          { text: "Let them self-report ESG scores", pts: 0 },
+          { text: "Require basic disclosure only", pts: 1 },
+          { text: "Regulate ESG scoring + mandate real impact data", pts: 5 },
+          { text: "Let investors choose what's important to them", pts: 3 }
+        ],
+        insight: "Push for transparent, regulated ESG reporting that measures real-world environmental and social impact — not just risk to profit."
+      },
+      {
+        theme: "11. Economic Models",
+        text: "Your country is redesigning its economy for sustainability. What model do you follow?",
+        choices: [
+          { text: "Traditional growth through fossil fuel and exports", pts: 0 },
+          { text: "Maximize GDP while adding green taxes", pts: 1 },
+          { text: "Shift to steady-state economy with capped resource use", pts: 5 },
+          { text: "Focus on GDP growth with renewable energy", pts: 3 }
+        ],
+        insight: "Shift focus away from GDP-only growth — degrowth or steady-state economies are more aligned with ecological limits."
+      },
+      {
+        theme: "12. Sustainable Agriculture",
+        text: "You want to ensure long-term food security. What’s your farming focus?",
+        choices: [
+          { text: "Large-scale monoculture with high fertilizer use", pts: 0 },
+          { text: "Organic practices but heavy water use", pts: 1 },
+          { text: "Agroecology and permaculture systems", pts: 5 },
+          { text: "Rotate crops and reduce pesticide use", pts: 3 }
+        ],
+        insight: "Adopt agroecological practices like polyculture, composting, and local water conservation — these build both soil and food security."
+      },
+      {
+        theme: "13. Planning for the Future",
+        text: "Your sustainability policy team is planning ahead. Which strategy do you adopt?",
+        choices: [
+          { text: "Predict and react based on past trends", pts: 1 },
+          { text: "Plan backwards from a desired future (backcasting)", pts: 5 },
+          { text: "Focus on economic forecasts only", pts: 0 },
+          { text: "Use AI to simulate economic growth", pts: 3 }
+        ],
+        insight: "Use backcasting: define your ideal future first, then plan how to get there — don’t let past systems define future outcomes."
+      },
+      {
+        theme: "14. Social Equity",
+        text: "You’re addressing inequality in development. What do you prioritize?",
+        choices: [
+          { text: "Build infrastructure in high-income areas", pts: 0 },
+          { text: "Provide microloans in poor regions", pts: 3 },
+          { text: "Empower local communities with training and resources", pts: 5 },
+          { text: "Increase national minimum wage without local tailoring", pts: 1 }
+        ],
+        insight: "Empower communities with funding, training, and autonomy — lasting change comes from the ground up, not just handouts."
+      },
+      {
+        theme: "15. Food Systems & Ecosystems",
+        text: "How do you build a sustainable food system?",
+        choices: [
+          { text: "Prioritize cheap calories through subsidies", pts: 0 },
+          { text: "Promote vertical farming in cities", pts: 3 },
+          { text: "Integrate trees, animals, and crops (agroecology)", pts: 5 },
+          { text: "Import more organic food", pts: 1 }
+        ],
+        insight: "Build regenerative, locally adapted food systems that restore ecosystems and reduce dependency on harmful imports or monoculture."
+      },
+      {
+        theme: "16. Global vs. Local",
+        text: "Your country is implementing the SDGs. What’s the best approach?",
+        choices: [
+          { text: "Follow global SDG targets exactly as written", pts: 1 },
+          { text: "Translate SDGs into local priorities and goals", pts: 5 },
+          { text: "Focus on national-level progress reporting", pts: 3 },
+          { text: "Ignore SDGs and focus on economic competitiveness", pts: 0 }
+        ],
+        insight: "Localize the SDGs by adapting them to your region’s needs and context — sustainability isn’t one-size-fits-all."
+      },
+      {
+        theme: "17. Intergenerational Justice",
+        text: "What does your sustainability education program emphasize?",
+        choices: [
+          { text: "Short-term growth and careers", pts: 0 },
+          { text: "Environmental tips like recycling", pts: 1 },
+          { text: "Systems thinking and responsibility for future generations", pts: 5 },
+          { text: "Climate risk management only", pts: 3 }
+        ],
+        insight: "Teach long-term systems thinking — sustainability requires considering the rights and needs of future generations in today’s decisions."
+      },
+      {
+        theme: "18. Governance Models",
+        text: "You’re building a sustainability governance system. What’s key?",
+        choices: [
+          { text: "Top-down government-only control", pts: 1 },
+          { text: "Public-private partnerships with clear rules", pts: 3 },
+          { text: "Decentralized, multi-stakeholder collaboration", pts: 5 },
+          { text: "Let companies self-regulate via ESG scoring", pts: 0 }
+        ],
+        insight: "Collaborate across sectors — strong sustainability governance involves communities, civil society, business, and all levels of government."
+      },
+      {
+        theme: "19. Biodiversity Protection",
+        text: "Species are disappearing. What’s your top priority?",
+        choices: [
+          { text: "Legal protection for key ecosystems + restoration", pts: 5 },
+          { text: "Fund urban zoos to protect endangered species", pts: 1 },
+          { text: "Focus on climate only—biodiversity will follow", pts: 0 },
+          { text: "Ban deforestation in certain reserves", pts: 3 }
+        ],
+        insight: "Go beyond conservation — invest in large-scale ecosystem restoration and integrate biodiversity into all sectors, not just protected areas."
+      },
+      {
+        theme: "20. Peace and Sustainability",
+        text: "Your country is dealing with rising instability. What’s your focus?",
+        choices: [
+          { text: "Increase military spending to ensure control", pts: 0 },
+          { text: "Use international loans to stabilize the economy", pts: 1 },
+          { text: "Build community-based peace and inclusion programs", pts: 5 },
+          { text: "Tighten surveillance to prevent unrest", pts: 3 }
+        ],
+        insight: "Build peace from the ground up with inclusive, community-based programs — sustainability cannot thrive under instability or fear."
+      }
+    ];
+
+    const feedbackMsgs = {
+      5: "You chose a Sustainable Option — a solid step in the right direction!",
+      3: "That was a Transformative Strategy — this would significantly accelerate progress!",
+      1: "This option has Limited Impact — it contributes, but falls short on real change.",
+      0: "This is a High-Risk Choice — it may do more harm than good in the long run."
+    };
+
+    const badgeMap = [
+      { max: 39, img: "images/47191186-7a2d-4ac7-aeca-25504f8f37d4.png" },
+      { max: 69, img: "images/ccc6498f-3a7c-4347-94b3-aa13b2e6b9af.png" },
+      { max: 89, img: "images/9794474a-671b-44d1-8093-13d7275ec03f.png" },
+      { max:100, img: "images/85488a9e-bb88-4018-8add-240cb5f867db.png" }
+    ];
+
+    let currentIndex = 0;
+    let answers = [];
+
+    const introEl   = document.getElementById('intro');
+    const quizEl    = document.getElementById('quiz');
+    const reviewEl  = document.getElementById('review');
+    const badgeEl   = document.getElementById('badge');
+    const startBtn  = document.getElementById('start-btn');
+    const qTitle    = document.getElementById('q-title');
+    const qText     = document.getElementById('q-text');
+    const qChoices  = document.getElementById('q-choices');
+    const reviewList= document.getElementById('review-list');
+    const badgeBtn  = document.getElementById('badge-btn');
+    const finalScoreEl = document.getElementById('final-score');
+    const badgeImg  = document.getElementById('badge-img');
+
+    startBtn.onclick = () => {
+      introEl.classList.add('hidden');
+      quizEl.classList.remove('hidden');
+      showQuestion();
+    };
+
+    function showQuestion() {
+      const q = questions[currentIndex];
+      qTitle.textContent = q.theme;
+      qText.textContent = q.text;
+      qChoices.innerHTML = '';
+      q.choices.forEach((c, idx) => {
+        const li = document.createElement('li');
+        const btn = document.createElement('button');
+        btn.textContent = c.text;
+        btn.onclick = () => selectAnswer(idx);
+        li.appendChild(btn);
+        qChoices.appendChild(li);
+      });
+    }
+
+    function selectAnswer(choiceIdx) {
+      answers.push(choiceIdx);
+      currentIndex++;
+      if (currentIndex < questions.length) {
+        showQuestion();
+      } else {
+        showReview();
+      }
+    }
+
+    function showReview() {
+      quizEl.classList.add('hidden');
+      reviewEl.classList.remove('hidden');
+      reviewList.innerHTML = '';
+
+      questions.forEach((q, i) => {
+        const chosenIdx = answers[i];
+        const chosen    = q.choices[chosenIdx];
+        const container = document.createElement('div');
+        container.className = 'review-item';
+
+        let html = `
+          <h3>${q.theme}</h3>
+          <p>${q.text}</p>
+          <ul>
+        `;
+        q.choices.forEach((c,j) => {
+          html += `<li${j === chosenIdx ? ' class="chosen"' : ''}>
+                     ${c.text} — <strong>${c.pts}p</strong>
+                  </li>`;
+        });
+        html += `</ul>
+                 <p class="feedback">${feedbackMsgs[chosen.pts]}</p>
+                 ${chosen.pts < 5 ? `<p class="feedback">👉 ${q.insight}</p>` : '' }
+        `;
+        container.innerHTML = html;
+        reviewList.appendChild(container);
+      });
+
+      badgeBtn.onclick = showBadge;
+    }
+
+    function showBadge() {
+      const total = answers.reduce((sum, a, i) => sum + questions[i].choices[a].pts, 0);
+      reviewEl.classList.add('hidden');
+      badgeEl.classList.remove('hidden');
+      finalScoreEl.textContent = total;
+      const badge = badgeMap.find(b => total <= b.max);
+      badgeImg.src = badge.img;
+    }
+  </script>
+
+</body>
+</html>
